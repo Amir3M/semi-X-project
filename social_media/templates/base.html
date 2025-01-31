@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{% endblock %}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Ubuntu', sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+
+        header, .content, .sidebar, .create-post-container, .signup-container, .post-detail {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            flex: 1 1 0;
+            min-width: 300px;
+        }
+        header{
+            flex-basis: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .auth-buttons {
+            display: flex;
+        }
+        .auth-buttons button, .back-btn, .create-post-container button, .post-actions button {
+            margin: 5px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #4CAF50; /* Green button */
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            text-decoration: none; /* For back button */
+        }
+        .auth-buttons button:hover, .back-btn:hover, .create-post-container button:hover, .post-actions button:hover{
+            background-color: #45a049;
+        }
+        .back-btn{
+            background-color: #007bff;
+        }
+        .post {
+            border-bottom: 1px solid #eee;
+            padding-bottom: 15px;
+            margin-bottom: 15px;
+        }
+        .post:last-child {
+            border-bottom: none;
+        }
+
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+        }
+        .sidebar li {
+            margin-bottom: 10px;
+        }
+        a {
+            color: #007bff;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        a:hover{
+            color: #0056b3;
+        }
+        h1, h2, h3 {
+            color: #333;
+        }
+        .content{
+            flex-grow: 2;
+        }
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            .sidebar {
+                width: 100%;
+                margin-left: 0;
+            }
+        }
+        /* Dashboard Specific Styles */
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+        }
+
+        .user-profile-image {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+            object-fit: cover;
+        }
+        .post-actions{
+            display: flex;
+            align-items: center;
+        }
+        .post-actions form{
+            margin: 0 5px;
+        }
+        .create-post-container {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80%;
+            max-width: 800px;
+            box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .post-image{
+            max-width: 100%;
+            height: auto;
+        }
+        /* Signup Specific Styles */
+        .signup-container {
+            max-width: 600px;
+            margin: 20px auto;
+        }
+        .signup-header{
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .auth-switch{
+            display: flex;
+            align-items: center;
+        }
+        .form-content{
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        /* Post detail styles */
+        .post-detail{
+
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        {% block content %}{% endblock %}
+    </div>
+</body>
+</html>

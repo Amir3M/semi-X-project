@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile</title>
+    <link rel="stylesheet" href="/static/css/styles.css"> 
+    <style>
+        .like-button.active {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .dislike-button.active {
+            background-color: #f44336;
+            color: white;
+        }
+
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+        }
+
+        .user-info a {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: #333;
+        }
+
+        .user-profile-image {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+            object-fit: cover;
+        }
+
+        .post {
+            border: 1px solid #ccc;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .post-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .post-header img {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            margin-right: 10px;
+            object-fit: cover;
+        }
+
+        .post-meta {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .post-author {
+            font-weight: bold;
+            margin-bottom: 2px;
+        }
+
+        .post-date {
+            font-size: 0.8em;
+            color: #666;
+        }
+
+        .post-content {
+            margin: 15px 0;
+        }
+
+        .post-image {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+
+        .post-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin: 10px 0;
+        }
+
+        .tag {
+            background-color: #f0f0f0;
+            padding: 3px 8px;
+            border-radius: 15px;
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        .post-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .post-actions form {
+            margin: 0;
+        }
+
+        .post-actions button {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .like-button {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .dislike-button {
+            background-color: #f44336;
+            color: white;
+        }
+
+        .comment-button {
+            background-color: #2196F3;
+            color: white;
+        }
+
+        .create-post-container {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80%;
+            max-width: 800px;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+
+        .create-post-container h3 {
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .create-post-container button {
+            margin: 5px;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .create-post-container button:hover {
+            background-color: #45a049;
+        }
+
+        .logout-button {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            background-color: #f44336;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .logout-button:hover {
+            background-color: #da190b;
+        }
+
+        /* Add margin to account for fixed create-post-container */
+        .posts-container {
+            margin-bottom: 200px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>{{ profile.username }}'s Profile</h1>
+        </header>
+
+        <div class="profile-details">
+            <img src="{{ profile.profile_image.url }}" alt="Profile Image" class="profile-image">
+            <p><strong>Bio:</strong> {{ profile.bio }}</p>
+            {% if profile.followers.exists %}
+                <p><strong>followers: </strong>{{profile.followers.count}}</p>
+            {% endif %}
+            {% if profile.following.exists %}
+                <p><strong>followings: </strong>{{profile.following.count}}</p>
+            {% endif %}
+            {% if is_own_profile %}
+                <a href="{% url 'edit_profile' %}" class="btn btn-primary">Edit Profile</a>
+                <div class="friend-requests">
+                    <h2>Friend Requests</h2>
+
+                    <div class="sent-requests">
+                        <h3>Sent Requests</h3>
+                        {% if sent_requests.exists %}
+                            <ul>
+                                {% for user in sent_requests %}
+                                    <li>{{ user.username }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <p>No sent requests.</p>
+                        {% endif %}
+                    </div>
+
+                    <div class="received-requests">
+                        <h3>Received Requests</h3>
+                        {% if received_requests.exists %}
+                            <ul>
+                                {% for user in received_requests %}
+                                    <li>
+                                        {{ user.username }}
+                                        <form method="post" action="{% url 'handle_friend_request' 'accept' user.id %}" style="display:inline;">
+                                            {% csrf_token %}
+                                            <button type="submit">Accept</button>
+                                        </form>
+                                        <form method="post" action="{% url 'handle_friend_request' 'reject' user.id %}" style="display:inline;">
+                                            {% csrf_token %}
+                                            <button type="submit">Reject</button>
+                                        </form>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <p>No received requests.</p>
+                        {% endif %}
+                    </div>
+                    
+                </div>
+            {% else %}
+                {% if profile in user.sent_requests.all %}
+                    <p>Friend request sent!</p>
+                {% else %}
+                    <form method="post" action="{% url 'send_friend_request' profile.id %}">
+                        {% csrf_token %}
+                        <button type="submit">Send Friend Request</button>
+                    </form>
+                {% endif %}
+            {% endif %}
+            
+        </div>
+
+        <div class="posts-section">
+            <h2>Posts</h2>
+            {% if posts %}
+                {% for post in posts %}
+                    <div class="post">
+                        <div class="post-header">
+                            <img src="{{ post.author.profile_image.url }}" alt="Author Profile Picture">
+                            <div class="post-meta">
+                                <span class="post-author">{{ post.author.user.username }}</span>
+                                <span class="post-date">{{ post.created_at|date:"F d, Y H:i" }}</span>
+                            </div>
+                        </div>
+                        
+                        <div class="post-content">
+                            <p>{{ post.content }}</p>
+                            {% if post.image %}
+                                <img class="post-image" src="{{ post.image.url }}" alt="Post Image">
+                            {% endif %}
+                        </div>
+
+                        {% if post.tags.all %}
+                            <div class="post-tags">
+                                {% for tag in post.tags.all %}
+                                    <span class="tag">#{{ tag.name }}</span>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                        <div class="post-actions">
+                            <form method="post" action="{% url 'like_post' post.id %}">
+                                {% csrf_token %}
+                                <button type="submit" class="like-button {% if request.user in post.likers.all %}active{% endif %}">
+                                    Like ({{ post.likers.count }})
+                                </button>
+                            </form>
+                            <form method="post" action="{% url 'dislike_post' post.id %}">
+                                {% csrf_token %}
+                                <button type="submit" class="dislike-button {% if request.user in post.dislikers.all %}active{% endif %}">
+                                    Dislike ({{ post.dislikers.count }})
+                                </button>
+                            </form>
+                            <a href="{% url "post_detail" post.id %}">
+                                <button class="comment-button">Comments</button>
+                            </a>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p>No posts yet.</p>
+            {% endif %}
+        </div>
+        {% if is_own_profile %}
+            <div class="friend-requests">
+                <h2>Friend Requests</h2>
+
+                <div class="sent-requests">
+                    <h3>Sent Requests</h3>
+                    {% if sent_requests.exists %}
+                        <ul>
+                            {% for user in sent_requests %}
+                                <li>{{ user.username }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p>No sent requests.</p>
+                    {% endif %}
+                </div>
+
+                <div class="received-requests">
+                    <h3>Received Requests</h3>
+                    {% if received_requests.exists %}
+                        <ul>
+                            {% for user in received_requests %}
+                                <li>{{ user.username }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p>No received requests.</p>
+                    {% endif %}
+                </div>
+                
+            </div>
+        {% else %}
+            <form method="post" action="{% url 'send_friend_request' profile.id %}">
+                {% csrf_token %}
+                <button type="submit">Send Friend Request</button>
+            </form>
+        {% endif %}
+    </div>
+</body>
+</html>

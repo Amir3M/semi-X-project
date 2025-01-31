@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "x-project"
+version = "0.1.0"
+description = ""
+authors = ["AMiR3M"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+django = "^5.1.4"
+pillow = "^11.1.0"
+django-crispy-forms = "^2.3"
+crispy-bootstrap5 = "^2024.10"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

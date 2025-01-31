@@ -1,0 +1,15 @@
+{% for comment in comments %}
+    <div class="comment" style="margin-left: {{ level }}px;">
+        <p>{{ comment.author.username }}: {{ comment.content }}</p>
+        <small>Posted on: {{ comment.created_at }}</small>
+        <form method="post">
+            {% csrf_token %}
+            {{ comment_form.as_p }}
+            <input type="hidden" name="parent_id" value="{{ comment.id }}">
+            <button type="submit">Reply</button>
+        </form>
+        {% with comments=comment.replies.all level=level|add:20 %}
+            {% include "home/comment_tree.html" %}
+        {% endwith %}
+    </div>
+{% endfor %}

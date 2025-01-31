@@ -1,0 +1,19 @@
+# Byte-compiled / Virtual Environment / Logs
+__pycache__/
+*.pyc
+*.pyo
+*.log
+
+# Environment variables
+.env
+*.env
+
+# Django specific
+db.sqlite3
+media/
+static/
+
+# Poetry & Dependencies
+poetry.lock
+.mypy_cache/
+.pytest_cache/
